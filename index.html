@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CREPE SIMO 48 — Crêperie Artisanale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       VARIABLES & RESET
+    ============================================================ */
+    .panier-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.panier-img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.panier-emoji {
+  font-size: 28px;
+}
+
+.panier-info {
+  display: flex;
+  flex-direction: column;
+}
+
+   .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--or);
+      letter-spacing: 1px;
+    }
+
+    .logo-container {
+  text-align: center;
+  padding: 15px 0;
+}
+
+.logo {
+  height: 80px;   /* ajuste la taille */
+  object-fit: contain;
+}
+
+    /* --- Style des images agrandies --- */
+.carte-img-container {
+    width: 100%;
+    height: 320px; /* On augmente de 180px à 250px pour un impact visuel fort */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #fdfdfd;
+    border-radius: 20px 20px 0 0; /* Arrondi seulement en haut */
+}
+
+.carte-img-file {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Remplit tout l'espace sans déformer */
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Petit effet zoom quand on survole la carte */
+.carte-plat:hover .carte-img-file {
+    transform: scale(1.1);
+}
+
+/* Style pour les emojis s'il en reste */
+.carte-img-emoji {
+    font-size: 80px; /* Plus grand pour matcher avec les photos */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* Ajustement de la carte pour qu'elle soit plus élégante */
+.carte-plat {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.carte-plat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+    :root {
+      --or:       #C9883A;
+      --or-clair: #E8B96A;
+      --brun:     #3A1F0A;
+      --creme:    #FDF6EC;
+      --blanc:    #FFFFFF;
+      --gris:     #7A6A5A;
+      --ombre:    rgba(58, 31, 10, 0.15);
+      --radius:   14px;
+      --transition: 0.3s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--creme);
+      color: var(--brun);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+    img { max-width: 100%; display: block; }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: rgba(253, 246, 236, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201, 136, 58, 0.2);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--or);
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--brun);
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover { color: var(--or); }
+
+    /* Bouton panier */
+    #btn-panier {
+      position: relative;
+      background: var(--or);
+      color: var(--blanc);
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    #btn-panier:hover { background: var(--brun); }
+
+    #badge-panier {
+      background: var(--brun);
+      color: var(--blanc);
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* Menu burger mobile */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .burger span {
+      width: 24px; height: 2px;
+      background: var(--brun);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #accueil {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 5% 60px;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(201, 136, 58, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(201, 136, 58, 0.08) 0%, transparent 50%),
+        var(--creme);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Cercles décoratifs */
+    #accueil::before, #accueil::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 136, 58, 0.15);
+      pointer-events: none;
+    }
+
+    #accueil::before {
+      width: 600px; height: 600px;
+      top: -200px; right: -200px;
+    }
+
+    #accueil::after {
+      width: 400px; height: 400px;
+      bottom: -150px; left: -150px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(201, 136, 58, 0.12);
+      color: var(--or);
+      border: 1px solid rgba(201, 136, 58, 0.3);
+      border-radius: 50px;
+      padding: 0.35rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-titre {
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      line-height: 1.05;
+      color: var(--brun);
+      margin-bottom: 0.5rem;
+      animation: fadeUp 0.7s ease 0.1s both;
+    }
+
+    .hero-titre span {
+      color: var(--or);
+      font-style: italic;
+    }
+
+    .hero-numero {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 3vw, 1.8rem);
+      color: var(--or);
+      letter-spacing: 6px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.7s ease 0.15s both;
+    }
+
+    .hero-desc {
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      color: var(--gris);
+      font-size: 1rem;
+      line-height: 1.7;
+      animation: fadeUp 0.7s ease 0.2s both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.7s ease 0.3s both;
+    }
+
+    .btn-primary {
+      background: var(--or);
+      color: var(--blanc);
+      border: none;
+      border-radius: 50px;
+      padding: 0.9rem 2rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background var(--transition), transform var(--transition);
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--brun);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--brun);
+      border: 2px solid var(--brun);
+      border-radius: 50px;
+      padding: 0.9rem 2rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all var(--transition);
+      display: inline-block;
+    }
+
+    .btn-outline:hover {
+      background: var(--brun);
+      color: var(--blanc);
+    }
+
+    /* Chiffres clés */
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 4rem;
+      animation: fadeUp 0.7s ease 0.4s both;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--or);
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--gris);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ============================================================
+       SECTIONS COMMUNES
+    ============================================================ */
+    section { padding: 80px 5%; }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--or);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-titre {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--brun);
+      margin-bottom: 1rem;
+    }
+
+    .section-titre em { color: var(--or); font-style: italic; }
+
+    .divider {
+      width: 50px;
+      height: 2px;
+      background: var(--or);
+      margin: 1rem 0 2.5rem;
+    }
+
+    /* ============================================================
+       FILTRES MENU
+    ============================================================ */
+    #menu { background: var(--blanc); }
+
+    .filtres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .filtre-btn {
+      background: transparent;
+      border: 1.5px solid rgba(201, 136, 58, 0.3);
+      border-radius: 50px;
+      padding: 0.5rem 1.2rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gris);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .filtre-btn:hover, .filtre-btn.actif {
+      background: var(--or);
+      border-color: var(--or);
+      color: var(--blanc);
+    }
+
+    /* ============================================================
+       GRILLE MENU
+    ============================================================ */
+    #grille-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .carte-plat {
+      background: var(--creme);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: pointer;
+      border: 1px solid rgba(201, 136, 58, 0.1);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .carte-plat:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px var(--ombre);
+    }
+
+    .carte-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f5e6cc, #ecddc4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .carte-corps {
+      padding: 1.1rem;
+    }
+
+    .carte-cat {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--or);
+      margin-bottom: 0.4rem;
+    }
+
+    .carte-nom {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--brun);
+      margin-bottom: 0.4rem;
+    }
+
+    .carte-desc {
+      font-size: 0.8rem;
+      color: var(--gris);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .card-pied {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+    .carte-prix {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--or);
+    }
+
+    .carte-prix span { font-size: 0.75rem; color: var(--gris); font-family: 'Lato', sans-serif; }
+
+
+    .btn-ajouter {
+      background: var(--or);
+      color: var(--blanc);
+      border: none;
+      border-radius: 50px;
+      padding: 0.45rem 1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+
+    .btn-ajouter:hover {
+      background: var(--brun);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       PANIER LATÉRAL
+    ============================================================ */
+    #overlay-panier {
+      position: fixed;
+      inset: 0;
+      background: rgba(58, 31, 10, 0.5);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+
+    #overlay-panier.ouvert { opacity: 1; pointer-events: all; }
+
+    #sidebar-panier {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: min(400px, 100vw);
+      background: var(--blanc);
+      z-index: 2001;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+      box-shadow: -10px 0 40px var(--ombre);
+    }
+
+    #sidebar-panier.ouvert { transform: translateX(0); }
+
+    .panier-entete {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(201, 136, 58, 0.15);
+    }
+
+    .panier-entete h3 {
+      font-size: 1.3rem;
+      color: var(--brun);
+    }
+
+    #btn-fermer-panier {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gris);
+      transition: color var(--transition);
+    }
+
+    #btn-fermer-panier:hover { color: var(--brun); }
+
+    #liste-panier {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 1.5rem;
+    }
+
+    .panier-vide {
+      text-align: center;
+      color: var(--gris);
+      padding: 3rem 1rem;
+    }
+
+    .panier-vide .emoji { font-size: 3rem; margin-bottom: 1rem; }
+
+    .panier-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(201, 136, 58, 0.1);
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .panier-item-emoji { font-size: 2rem; flex-shrink: 0; }
+
+    .panier-item-info { flex: 1; }
+
+    .panier-item-nom {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: var(--brun);
+    }
+
+    .panier-item-prix {
+      font-size: 0.85rem;
+      color: var(--or);
+      font-weight: 700;
+    }
+
+    .panier-item-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ctrl-btn {
+      background: var(--creme);
+      border: 1px solid rgba(201, 136, 58, 0.2);
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .ctrl-btn:hover { background: var(--or); color: var(--blanc); border-color: var(--or); }
+
+    .ctrl-qte { font-weight: 700; min-width: 20px; text-align: center; font-size: 0.9rem; }
+
+    .panier-pied {
+      padding: 1.5rem;
+      border-top: 1px solid rgba(201, 136, 58, 0.15);
+    }
+
+    .total-ligne {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .total-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--or);
+      font-weight: 700;
+    }
+
+    #btn-whatsapp {
+      width: 100%;
+      background: #25D366;
+      color: var(--blanc);
+      border: none;
+      border-radius: var(--radius);
+      padding: 1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    #btn-whatsapp:hover { background: #1da851; transform: translateY(-2px); }
+
+    #btn-vider {
+      width: 100%;
+      margin-top: 0.7rem;
+      background: none;
+      border: 1px solid rgba(201, 136, 58, 0.3);
+      border-radius: var(--radius);
+      padding: 0.7rem;
+      color: var(--gris);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    #btn-vider:hover { border-color: #e55; color: #e55; }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    #contact {
+      background: var(--brun);
+      color: var(--creme);
+    }
+
+    #contact .section-label { color: var(--or-clair); }
+    #contact .section-titre { color: var(--blanc); }
+    #contact .divider { background: var(--or-clair); }
+
+    .contact-grille {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .contact-bloc {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201, 136, 58, 0.2);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .contact-icone {
+      font-size: 1.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .contact-bloc h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--or-clair);
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-bloc p {
+      font-size: 0.9rem;
+      color: rgba(253, 246, 236, 0.7);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: #1a0d04;
+      color: rgba(253, 246, 236, 0.5);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+    }
+
+    footer strong { color: var(--or); }
+
+    /* ============================================================
+       TOAST NOTIFICATION
+    ============================================================ */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--brun);
+      color: var(--blanc);
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      z-index: 9999;
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+      white-space: nowrap;
+    }
+
+    #toast.visible { transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       ANIMATIONS
+    ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .burger { display: flex; }
+
+      .nav-links.ouvert {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 64px; left: 0; right: 0;
+        background: var(--creme);
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(201,136,58,0.15);
+        gap: 1.2rem;
+      }
+
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+
+      #grille-menu { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    }
+
+    @media (max-width: 480px) {
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; text-align: center; }
+    }
+  </style>
+  
+
+</head>
+<body>
+
+  <!-- ================================================
+       NAVIGATION
+  ================================================ -->
+  <nav id="navbar">
+    <div class="nav-logo" style="display:flex;align-items:center;gap:0.5rem;"> <img src="logo.jpeg" alt="Logo Crepe Simo 48" style="height:42px;width:42px;object-fit:cover;border-radius:50%;"/> CREPE SIMO 48</div>
+   
+
+    <!-- Liens desktop -->
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#accueil">Accueil</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div style="display:flex; align-items:center; gap:0.8rem;">
+      <!-- Bouton panier -->
+      <button id="btn-panier" onclick="togglePanier()">
+        🧺 Panier
+        <span id="badge-panier">0</span>
+      </button>
+      <!-- Burger menu mobile -->
+      <div class="burger" id="burger" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================================================
+       SECTION HERO / ACCUEIL
+  ================================================ -->
+<section id="accueil">
+    <div class="hero-contenu">
+      <div style="margin-bottom:1.5rem;animation:fadeUp 0.5s ease both;"><img src="logo.jpeg" 
+        alt="Logo Crepe Simo 48" style="width:130px;height:130px;object-fit:cover;border-radius:50%;margin:0 auto;box-shadow:0 10px 40px rgba(201,136,58,0.3);border:3px solid rgba(201,136,58,0.4);display:block;"/></div><div class="hero-tag">🥞 Crêperie Artisanale</div>
+      <h1 class="hero-titre">Crepe <span>Simo</span></h1>
+      <div class="hero-numero">— 48 —</div>
+      <p class="hero-desc">
+        Des crêpes faites avec passion, des gaufres dorées à la perfection,
+        des desserts qui font voyager. Bienvenue dans notre univers gourmand.
+      </p>
+      <div class="hero-btns">
+        <a href="#menu" class="btn-primary">Commander maintenant</a>
+        <a href="#contact" class="btn-outline">Nous trouver</a>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">75+</div>
+          <div class="stat-label">Créations</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Catégories</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Fait maison</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================
+       SECTION MENU
+  ================================================ -->
+  <section id="menu">
+    <div class="section-label">Notre carte</div>
+    <h2 class="section-titre">Le <em>Menu</em></h2>
+    <div class="divider"></div>
+
+    <!-- Filtres par catégorie -->
+    <div class="filtres">
+      <button class="filtre-btn actif" onclick="filtrer('tout', this)">Tout voir</button>
+      <button class="filtre-btn" onclick="filtrer('crepes-sucrees', this)">🥞 Crêpes Sucrées</button>
+      <button class="filtre-btn" onclick="filtrer('crepes-salees', this)">🧀 Crêpes Salées</button>
+      <button class="filtre-btn" onclick="filtrer('gaufres', this)">🧇 Gaufres</button>
+      <button class="filtre-btn" onclick="filtrer('desserts', this)">🍮 Desserts</button>
+      <button class="filtre-btn" onclick="filtrer('boissons', this)">🥤 Boissons</button>
+    </div>
+
+    <!-- Grille des plats générée en JS -->
+    <div id="grille-menu"></div>
+  </section>
+
+  <!-- ================================================
+       SECTION CONTACT
+  ================================================ -->
+  <section id="contact">
+    <div class="section-label">Venez nous voir</div>
+    <h2 class="section-titre">Contact & <em>Infos</em></h2>
+    <div class="divider"></div>
+
+    <div class="contact-grille">
+      <div class="contact-bloc">
+        <div class="contact-icone">📍</div>
+        <h4>Adresse</h4>
+        <!-- ✏️ PERSONNALISER : Mettez l'adresse du restaurant -->
+        <p>Boulevard Naboulssi 53<br>Oujda, Maroc</p>
+      </div>
+      <div class="contact-bloc">
+        <div class="contact-icone">🕐</div>
+        <h4>Horaires</h4>
+        <!-- ✏️ PERSONNALISER : Mettez les horaires du restaurant -->
+        <p>Lundi OFF <br>Mar – Dim : 16h – 00h</p>
+      </div>
+      <div class="contact-bloc">
+        <div class="contact-icone">📞</div>
+        <h4>Téléphone</h4>
+        <!-- ✏️ PERSONNALISER : Mettez le numéro de téléphone -->
+        <p>+212 6 69 66 10 70<br>+212 6 69 66 10 70<br>WhatsApp disponible</p>
+      </div>
+      <div class="contact-bloc">
+        <div class="contact-icone">📱</div>
+        <h4>Réseaux Sociaux</h4>
+        <!-- ✏️ PERSONNALISER : Ajoutez les réseaux sociaux -->
+        <p>@crepe_simo.48<br>Instagram · TikTok</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================
+       FOOTER
+  ================================================ -->
+  <footer>
+    <p>© 2026 <strong>CREPE SIMO 48</strong> — Tous droits réservés.</p>
+    <p style="margin-top:0.3rem; font-size:0.75rem;">DESIGNED BY RAYANESHH</p>
+  </footer>
+
+  <!-- ================================================
+       PANIER LATÉRAL
+  ================================================ -->
+  <div id="overlay-panier" onclick="togglePanier()"></div>
+
+  <div id="sidebar-panier">
+    <div class="panier-entete">
+      <h3>🧺 Votre Panier</h3>
+      <button id="btn-fermer-panier" onclick="togglePanier()">✕</button>
+    </div>
+ <div style="padding: 0.6rem 1.5rem; border-bottom: 1px solid rgba(201,136,58,0.1);">
+      <button onclick="togglePanier()" style="background:rgba(201,136,58,0.1);border:1.5px solid rgba(201,136,58,0.3);border-radius:50px;padding:0.4rem 1rem;font-family:'Lato',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--or);cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;gap:0.4rem;" onmouseover="this.style.background='rgba(201,136,58,0.2)'" onmouseout="this.style.background='rgba(201,136,58,0.1)'">
+        ← Continuer mes achats
+      </button>
+    </div>
+    <div id="liste-panier">
+      <!-- Contenu généré par JS -->
+    </div>
+
+    <div class="panier-pied">
+      <div class="total-ligne">
+        <span style="font-weight:700; font-size:1rem;">Total</span>
+        <span class="total-val" id="total-panier">0 MAD</span>
+      </div>
+      <button id="btn-whatsapp" onclick="commanderWhatsApp()">
+        <!-- Icône WhatsApp SVG -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Commander via WhatsApp
+      </button>
+      <button id="btn-vider" onclick="viderPanier()">Vider le panier</button>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast"></div>
+
+  <!-- Bouton flèche retour haut du menu -->
+  <button id="btn-haut-menu" onclick="scrollVersMenu()" title="Retour en haut du menu" style="
+    position: fixed;
+    bottom: 2rem;
+    right: 1.5rem;
+    width: 48px; height: 48px;
+    background: var(--or);
+    color: var(--blanc);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(201,136,58,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  ">↑</button>
+  <!-- ================================================
+       JAVASCRIPT
+  ================================================ -->
+  <script>
+    // ============================================================
+    // 📦 DONNÉES DU MENU
+    // ✏️ PERSONNALISER : Modifiez le tableau menuData pour changer les plats
+    // ============================================================
+    const menuData = [
+      { id:1,  name:"Nutella",              category:"crepes-sucrees", price:17,  description:"Crêpe sucrée avec pâte à tartiner Nutella",                 image: "nut.jpeg"  },
+      { id:4,  name:"Lotus",                category:"crepes-sucrees", price:28,  description:"Crêpe sucrée avec crème Lotus",                             image: "crepelotus.jpeg" },
+      { id:8,  name:"Konafa",     category:"crepes-sucrees", price:30,  description:"Crêpe avec Konafa et Fraise",                      image: "konafafraise.jpeg" },
+      { id:9,  name:"Pistache et Konafa",   category:"crepes-sucrees", price:35,  description:"Crêpe avec crème pistache et konafa",                       image: "crepepistache.jpeg" },
+      { id:17, name:"Crêpe Salée",          category:"crepes-salees",  price:40,  description:"Champignon, charcuterie, fromage, béchamel, sauce bravo",   image: "crepesale.jpeg" },
+      { id:18, name:"Crêpe Salée Dinde",    category:"crepes-salees",  price:45,  description:"Dinde, champignon, charcuterie, fromage, béchamel",         image: "crepesale.jpeg" },
+      { id:19, name:"Crêpe Mixte",          category:"crepes-sucrees", price:45,  description:"Nutella, Banane, Oreo, Lotus",                              image: "crepemixte55.jpeg" },
+      { id:20, name:"Crêpe Mixte Complète", category:"crepes-sucrees", price:55,  description:"Nutella, Banane, Oreo, Lotus, Kitkat, Fruits Secs, Kinder", image: "crepemixte.jpeg" },
+      { id:22, name:"Gaufre Nutella",       category:"gaufres",        price:20,  description:"Gaufre croustillante avec Nutella",                         image: "gaufre.jpeg" },
+      { id:29, name:"Gaufre Pistache Nutella",  category:"gaufres",   price:30,  description:"Gaufre avec pistache et Nutella",                          image: "gaufresousit.jpeg" },
+      { id:39, name:"Tiramisu Oreo",        category:"desserts",       price:15,  description:"Tiramisu au goût Oreo",                                     image: "tiramisuoreo.jpeg" },
+            { id:40, name:"Tiramisu Citron",      category:"desserts",       price:20,  description:"Tiramisu au citron",                                        image: "tiramisucitron.jpeg" },
+      { id:48, name:"Pabama",              category:"boissons",       price:35,  description:"Mangue, banane, fruit de passion",                           image: "paban.jpeg" },
+      { id:57, name:"Mojito",             category:"boissons",       price:20,  description:"Citron, fraise, framboise, menthe, orange",                   image: "mojito.jpeg" },
+      { id:67, name:"Jus Avocat",         category:"boissons",       price:25,  description:"Jus d'avocat",                                                image:"avoca.jpeg" },
+      { id:56, name:"Milkshake au Choix", category:"boissons",       price:25,  description:"Fraise, chocolat, vanille, caramel",                          image:"matchikfriz.jpeg" },
+      { id:60, name:"Ice Tea",            category:"boissons",       price:15,  description:"Pêche, citron, framboise",                                    image:"ice.jpeg" },
+      { id:68, name:"Café Noir",          category:"boissons",       price:12,  description:"Café noir classique",                                         image:"cafenoire.jpeg" },
+      { id:69, name:"Café Crème",         category:"boissons",       price:12,  description:"Café avec crème",                                             image:"creme.jpeg" },
+      { id:2,  name:"Oreo",                 category:"crepes-sucrees", price:20,  description:"Crêpe sucrée avec biscuits Oreo écrasés",                   image: "" },
+
+      { id:3,  name:"Banane",               category:"crepes-sucrees", price:20,  description:"Crêpe sucrée avec banane fraîche",                          image: "" },
+      
+      { id:5,  name:"Caramel",              category:"crepes-sucrees", price:20,  description:"Crêpe sucrée avec sauce caramel",                           image: "" },
+      { id:6,  name:"Citron – Crème Citron",category:"crepes-sucrees", price:20,  description:"Crêpe sucrée avec crème au citron",                       image: "" },
+      { id:7,  name:"Kinder – Crème Kinder",category:"crepes-sucrees", price:30,  description:"Crêpe sucrée avec crème Kinder",                           image: "" },
+      
+      
+      { id:10, name:"Fruits Secs",          category:"crepes-sucrees", price:35,  description:"Crêpe avec mélange de fruits secs",                        image:"" },
+      { id:11, name:"Miel au Noix",         category:"crepes-sucrees", price:20,  description:"Crêpe avec miel et noix",                                   image: "" },
+      { id:12, name:"Caramel Noisettes",    category:"crepes-sucrees", price:20,  description:"Crêpe avec caramel et noisettes",                           image: "" },
+      { id:13, name:"Amlou",               category:"crepes-sucrees", price:20,  description:"Crêpe avec pâte Amlou traditionnelle",                      image: "" },
+      { id:14, name:"Nutella Brownie",      category:"crepes-sucrees", price:35,  description:"Crêpe avec Nutella et brownies",                            image: "" },
+      { id:15, name:"Ferrero Rocher",       category:"crepes-sucrees", price:30,  description:"Crêpe avec Ferrero Rocher",                                 image: ""},
+      { id:16, name:"Dutch Pancake",        category:"crepes-sucrees", price:17,  description:"Pancake hollandais moelleux",                               image: ""},
+      
+      { id:21, name:"Crêpe SIMO",           category:"crepes-sucrees", price:65,  description:"La spécialité maison complète",                             image: "" },
+      { id:23, name:"Gaufre Oreo",          category:"gaufres",        price:23,  description:"Gaufre croustillante avec Oreo",                      image: ""      },
+      { id:24, name:"Gaufre Banane",        category:"gaufres",        price:23,  description:"Gaufre croustillante avec banane",                         image: "" },
+      { id:25, name:"Gaufre Lotus",         category:"gaufres",        price:30,  description:"Gaufre croustillante avec crème Lotus",                     image: "" },
+      { id:26, name:"Gaufre Caramel",       category:"gaufres",        price:20,  description:"Gaufre croustillante avec sauce caramel",                   image: "" },
+      { id:27, name:"Gaufre Citron",        category:"gaufres",        price:25,  description:"Gaufre croustillante avec crème citron",                    image: "" },
+      { id:28, name:"Gaufre Kinder",        category:"gaufres",        price:30,  description:"Gaufre croustillante avec crème Kinder",                    image: "" },
+      { id:30, name:"Gaufre Pistache Konafa",   category:"gaufres",   price:40,  description:"Gaufre avec pistache et konafa",                            image: "" },
+      { id:31, name:"Gaufre Fruits Secs",   category:"gaufres",        price:30,  description:"Gaufre avec fruits secs",                                   image: "" },
+      { id:32, name:"Gaufre Miel au Noix",  category:"gaufres",        price:20,  description:"Gaufre avec miel et noix",                                 image: "" },
+      { id:33, name:"Gaufre Caramel Noisettes", category:"gaufres",   price:20,  description:"Gaufre avec caramel et noisettes",                        image: "" },
+      { id:34, name:"Gaufre Amlou",         category:"gaufres",        price:20,  description:"Gaufre avec pâte Amlou",                                   image: "" },
+      { id:35, name:"Gaufre Nutella Brownie",   category:"gaufres",   price:35,  description:"Gaufre avec Nutella et brownies",                          image: "" },
+      { id:36, name:"Gaufre Ferrero Rocher",    category:"gaufres",   price:30,  description:"Gaufre avec Ferrero Rocher",                                image: "" },
+      { id:37, name:"Gaufre Nutella Banane",    category:"gaufres",   price:13,  description:"Gaufre avec Nutella et banane",                             image: ""},
+      { id:38, name:"Gaufre Pistache Crème",    category:"gaufres",   price:15,  description:"Gaufre avec crème pistache",                               image: "" },
+      { id:41, name:"Tiramisu Lotus",       category:"desserts",       price:20,  description:"Tiramisu au Lotus",                                         image: ""},
+      { id:42, name:"Tiramisu Pistache",    category:"desserts",       price:25,  description:"Tiramisu à la pistache",                                    image: "" },
+      { id:43, name:"Tiramisu Kinder",      category:"desserts",       price:20,  description:"Tiramisu au Kinder",                                        image: "" },
+      { id:44, name:"Tiramisu Fraise",      category:"desserts",       price:20,  description:"Tiramisu à la fraise",                                     image: ""},
+      { id:45, name:"Chocolat Dubai Petit", category:"desserts",       price:30,  description:"Petit chocolat Dubai",                                      image: "" },
+      { id:46, name:"Chocolat Dubai Moyen", category:"desserts",       price:60,  description:"Chocolat Dubai moyen",                                     image: "" },
+      { id:47, name:"Fraîcheur",            category:"boissons",       price:28,  description:"Fraise, pêche, pomme",                                      image: "" },
+      { id:49, name:"Tom Tkin",            category:"boissons",       price:30,  description:"Ananas, orange, citron",                                     image: "" },
+      { id:50, name:"Early Gold",          category:"boissons",       price:30,  description:"Mangue, ananas, citron, grenadine",                          image: "" },
+      { id:51, name:"Bora Bora",           category:"boissons",       price:32,  description:"Citron, ananas, fruits de passion, fraise",                  image: "" },
+      { id:52, name:"Vitamine C",          category:"boissons",       price:28,  description:"Banane, kiwi, fruit de passion, vanille",                    image: "" },
+      { id:53, name:"Tahiti",              category:"boissons",       price:35,  description:"Mangue, orange, ananas, yaourt, banane",                     image: ""},
+      { id:54, name:"Smoothie Banana",     category:"boissons",       price:30,  description:"Yaourt, orange, banane, grenadine",                          image: "" },
+      { id:55, name:"Graick",             category:"boissons",       price:30,  description:"Avocat, mangue, noix, datte, miel, amande",                  image: "" },
+      { id:58, name:"Mojito Mixte",       category:"boissons",       price:25,  description:"Mix de saveurs mojito",                                       image: "" },
+      { id:59, name:"Frappuccino",        category:"boissons",       price:25,  description:"Caramel, vanille, noisette",                                  image: "" },
+      { id:61, name:"Jus Orange",         category:"boissons",       price:15,  description:"Jus d'orange frais",                                          image: "" },
+      { id:62, name:"Jus Banane",         category:"boissons",       price:15,  description:"Jus de banane",                                               image: "" },
+      { id:63, name:"Jus Pomme",          category:"boissons",       price:15,  description:"Jus de pomme",                                               image: "" },
+      { id:64, name:"Jus Citron",         category:"boissons",       price:15,  description:"Jus de citron",                                              image: "" },
+      { id:65, name:"Jus Ananas",         category:"boissons",       price:25,  description:"Jus d'ananas",                                                image: "" },
+      { id:66, name:"Jus Fraise",         category:"boissons",       price:25,  description:"Jus de fraise",                                              image: "" },
+      { id:70, name:"Lait au Café",       category:"boissons",       price:12,  description:"Lait chaud au café",                                          image: "" },
+      { id:71, name:"Cappuccino",         category:"boissons",       price:12,  description:"Cappuccino classique",                                       image: "" },
+      { id:72, name:"Café Américain",     category:"boissons",       price:12,  description:"Café américain",                                              image: "" },
+      { id:73, name:"Lait au Chocolat",   category:"boissons",       price:12,  description:"Lait chaud au chocolat",                                     image: "" },
+      { id:74, name:"Chocolat Fondu",     category:"boissons",       price:30,  description:"Nutella, lotus, chocolat, caramel",                           image: "" },
+      { id:75, name:"Ice Coffee",         category:"boissons",       price:20,  description:"Nutella, lotus, chocolat, caramel",                          image: "" },
+    ];
+
+    // ============================================================
+    // 🛒 ÉTAT DU PANIER
+    // ============================================================
+    let panier = []; // Tableau d'articles : { id, name, price, emoji, quantite }
+
+    // ============================================================
+    // 🖼️ AFFICHAGE DU MENU
+    // ============================================================
+    let categorieActive = 'tout';
+
+    function afficherMenu(categorie) {
+      const grille = document.getElementById('grille-menu');
+      grille.innerHTML = '';
+
+      const plats = categorie === 'tout'
+        ? menuData
+        : menuData.filter(p => p.category === categorie);
+
+      plats.forEach((plat, index) => {
+        const carte = document.createElement('div');
+        carte.className = 'carte-plat';
+        carte.style.animationDelay = `${index * 0.04}s`;
+
+        const labelsCategorie = {
+          'crepes-sucrees': 'Crêpe Sucrée',
+          'crepes-salees':  'Crêpe Salée',
+          'gaufres':        'Gaufre',
+          'desserts':       'Dessert',
+          'boissons':       'Boisson'
+        };
+
+        // --- CORRECTION ICI : Gérer Image ou Emoji ---
+        // Si plat.image existe, on met une balise img, sinon on garde l'emoji
+        let visuel = "";
+
+// Vérifier si l'image existe ET est valide
+if (
+  plat.image &&
+  plat.image.trim() !== "" &&
+  !plat.image.startsWith(".")
+) {
+  visuel = `<img src="${plat.image}" alt="${plat.name}" class="carte-img-file">`;
+} 
+else if (plat.emoji) {
+  visuel = `<div class="carte-img-emoji">${plat.emoji}</div>`;
+}
+
+        carte.innerHTML = `
+  ${visuel ? `<div class="carte-img-container">${visuel}</div>` : ""}
+  <div class="carte-corps">
+    <div class="carte-cat">${labelsCategorie[plat.category] || plat.category}</div>
+    <h3 class="carte-nom">${plat.name}</h3>
+    <p class="carte-desc">${plat.description}</p>
+    <div class="carte-pied">
+      <div class="carte-pied">
+              <div class="carte-prix">${plat.price} <span>MAD</span></div>
+              <button class="btn-ajouter" onclick="ajouterAuPanier(${plat.id})">🛒 Ajouter</button>
+            </div>
+  </div>
+`;
+
+        grille.appendChild(carte);
+      });
+    }
+
+    // ============================================================
+    // 🔍 FILTRER LE MENU
+    // ============================================================
+    function filtrer(categorie, btnClique) {
+      categorieActive = categorie;
+
+      // Mettre à jour le style du bouton actif
+      document.querySelectorAll('.filtre-btn').forEach(btn => btn.classList.remove('actif'));
+      btnClique.classList.add('actif');
+
+      afficherMenu(categorie);
+    }
+
+    // ============================================================
+    // ➕ AJOUTER UN ARTICLE AU PANIER
+    // ============================================================
+    function ajouterAuPanier(id) {
+      const plat = menuData.find(p => p.id === id);
+      if (!plat) return;
+
+      // Chercher si l'article est déjà dans le panier
+      const existant = panier.find(item => item.id === id);
+      if (existant) {
+        existant.quantite++;
+      } else {
+        panier.push({ ...plat, quantite: 1 });
+      }
+
+      mettreAJourPanier();
+      afficherToast(`✅ ${plat.name} ajouté !`);
+           // Ouvrir le panier automatiquement
+      const sidebar = document.getElementById('sidebar-panier');
+      const overlay = document.getElementById('overlay-panier');
+      if (!sidebar.classList.contains('ouvert')) {
+        sidebar.classList.add('ouvert');
+        overlay.classList.add('ouvert');
+        document.body.style.overflow = 'hidden';
+      }
+    
+    }
+
+    // ============================================================
+    // 📊 METTRE À JOUR L'AFFICHAGE DU PANIER
+    // ============================================================
+   function mettreAJourPanier() {
+  const listePanier = document.getElementById('liste-panier');
+  const badge       = document.getElementById('badge-panier');
+  const totalEl     = document.getElementById('total-panier');
+
+  const totalArticles = panier.reduce((sum, item) => sum + item.quantite, 0);
+  const totalPrix     = panier.reduce((sum, item) => sum + item.price * item.quantite, 0);
+
+  badge.textContent = totalArticles;
+  totalEl.textContent = `${totalPrix} MAD`;
+
+  listePanier.innerHTML = '';
+
+  if (panier.length === 0) {
+    listePanier.innerHTML = `
+      <div class="panier-vide">
+        <div class="emoji">🥞</div>
+        <p>Votre panier est vide.<br>Ajoutez des délices !</p>
+      </div>
+    `;
+    return;
+  }
+
+  // 🔥 UNE SEULE BOUCLE PROPRE
+  panier.forEach(item => {
+
+    let visuel = "";
+
+    if (item.image && item.image.trim() !== "") {
+      visuel = `<img src="${item.image}" class="panier-img" alt="${item.name}">`;
+    } 
+    else if (item.emoji) {
+      visuel = `<div class="panier-emoji">${item.emoji}</div>`;
+    }
+
+    const ligne = document.createElement('div');
+    ligne.className = 'panier-item';
+
+    ligne.innerHTML = `
+      ${visuel ? visuel : ""}
+      <div class="panier-item-info">
+        <div class="panier-item-nom">${item.name}</div>
+        <div class="panier-item-prix">${item.price * item.quantite} MAD</div>
+      </div>
+      <div class="panier-item-ctrl">
+        <button class="ctrl-btn" onclick="changerQuantite(${item.id}, -1)">−</button>
+        <span class="ctrl-qte">${item.quantite}</span>
+        <button class="ctrl-btn" onclick="changerQuantite(${item.id}, +1)">+</button>
+      </div>
+    `;
+
+    listePanier.appendChild(ligne);
+  });
+}
+
+
+      
+
+  
+    // ============================================================
+    // ↕️ CHANGER LA QUANTITÉ D'UN ARTICLE
+    // ============================================================
+    function changerQuantite(id, delta) {
+      const item = panier.find(p => p.id === id);
+      if (!item) return;
+
+      item.quantite += delta;
+
+      // Supprimer l'article si la quantité tombe à 0
+      if (item.quantite <= 0) {
+        panier = panier.filter(p => p.id !== id);
+      }
+
+      mettreAJourPanier();
+    }
+
+    // ============================================================
+    // 🗑️ VIDER LE PANIER
+    // ============================================================
+    function viderPanier() {
+      panier = [];
+      mettreAJourPanier();
+    }
+
+    // ============================================================
+    // 📱 OUVRIR / FERMER LE PANIER
+    // ============================================================
+    function togglePanier() {
+      const sidebar = document.getElementById('sidebar-panier');
+      const overlay = document.getElementById('overlay-panier');
+      sidebar.classList.toggle('ouvert');
+      overlay.classList.toggle('ouvert');
+      document.body.style.overflow = sidebar.classList.contains('ouvert') ? 'hidden' : '';
+    }
+
+    // ============================================================
+    // 💬 COMMANDER VIA WHATSAPP
+    // ✏️ PERSONNALISER : Remplacez le numéro par celui du restaurant
+    // Format : code pays + numéro sans espaces (ex: 212612345678)
+    // ============================================================
+    function commanderWhatsApp() {
+      if (panier.length === 0) {
+        afficherToast('❌ Votre panier est vide !');
+        return;
+      }
+
+      // Construire le message de commande
+      let message = '🥞 *Nouvelle commande — CREPE SIMO 48*\n\n';
+      message += '📋 *Détail de la commande :*\n';
+
+      panier.forEach(item => {
+        message += `• ${item.name} x${item.quantite} — ${item.price * item.quantite} MAD\n`;
+      });
+
+      const total = panier.reduce((sum, item) => sum + item.price * item.quantite, 0);
+      message += `\n💰 *Total : ${total} MAD*\n`;
+      message += '\n📍 _Merci de confirmer votre adresse de livraison._';
+
+      // ✏️ PERSONNALISER : Remplacez ce numéro par le vrai numéro WhatsApp
+      const numero = '212669661070';
+
+      // Encoder le message et ouvrir WhatsApp
+      const url = `https://wa.me/${numero}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    // ============================================================
+    // 🔔 TOAST NOTIFICATION
+    // ============================================================
+    let toastTimeout;
+
+    function afficherToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('visible');
+
+      // Masquer après 2.5 secondes
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('visible'), 2500);
+    }
+
+    // Ouvre le panier automatiquement quand on ajoute un article
+    const origAjouter = ajouterAuPanier;
+    // (géré directement dans ajouterAuPanier ci-dessous)
+
+    // Bouton flèche : visible seulement quand on est dans le menu ou en dessous
+    function scrollVersMenu() {
+      document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('btn-haut-menu');
+      const menu = document.getElementById('menu');
+      const menuTop = menu.getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY > menuTop + 200) {
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+      } else {
+        btn.style.opacity = '0';
+        btn.style.pointerEvents = 'none';
+      }
+    });
+
+    // ============================================================
+    // 🍔 MENU BURGER MOBILE
+    // ============================================================
+    function toggleNav() {
+      document.getElementById('nav-links').classList.toggle('ouvert');
+    }
+
+    // Fermer le menu en cliquant sur un lien
+    document.querySelectorAll('.nav-links a').forEach(lien => {
+      lien.addEventListener('click', () => {
+        document.getElementById('nav-links').classList.remove('ouvert');
+      });
+    });
+
+    // ============================================================
+    // 🚀 INITIALISATION
+    // ============================================================
+    afficherMenu('tout');    // Afficher tous les plats au chargement
+    mettreAJourPanier();     // Initialiser l'affichage du panier
+    document.querySelectorAll("img").forEach(img => {
+  if (!img.getAttribute("src")) {
+    img.style.display = "none";
+  }
+});
+  </script>
+</body>
+</html>
